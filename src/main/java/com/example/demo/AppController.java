@@ -32,9 +32,12 @@ public class AppController {
                 Map<String, Object> parameters =  ((Map<String, Object>)query.get("parameters"));
                 if (parameters.get("subject") != null) {
                     String subject =  ((String)parameters.get("subject"));
-                    response = "{\"fulfillmentText\": \"" + subject + "1\",\n" +
-                            "     \"source\": \"dad jokes\"\n" +
-                            "    }";
+                    if ((subject != null) && !(subject.equals(""))) {
+                        response = "{\"fulfillmentText\": \"" + subject + "1\",\n" +
+                                "     \"source\": \"dad jokes\"\n" +
+                                "    }";
+
+                    }
                 }
             }
         }
