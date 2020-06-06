@@ -23,7 +23,24 @@ public class AppController {
     @RequestMapping(value = "/app",method = RequestMethod.POST)
     public String postBot(@RequestBody Map<String,Object> webhook) {
         System.out.println(webhook);
-        return "Hello";
+        String response = "{\"fulfillmentText\": \"\",\n" +
+                "     \"source\": \"dad jokes\"\n" +
+                "    }";
+        if (webhook.get("queryResult") != null){
+            Map<String, Object> query =  ((Map<String, Object>)webhook.get("queryResult"));
+            if (query.get("parameters") != null) {
+                Map<String, Object> parameters =  ((Map<String, Object>)query.get("parameters"));
+                if (parameters.get("subject") != null) {
+                    String subject =  ((String)parameters.get("subject"));
+                    response = "{\"fulfillmentText\": \"" + subject + "\",\n" +
+                            "     \"source\": \"dad jokes\"\n" +
+                            "    }";
+                }
+            }
+        }
+
+
+        return response;
     }
 
 }
