@@ -88,7 +88,7 @@ public class AppController {
             Matcher pr = price.matcher(p);
             if (m.find() && pr.find()) {
                 System.out.println(m.group(1) + " price: " +  pr.group(1));
-                res += m.group(1) + " price: " +  pr.group(1) + "\n";
+                res += m.group(1) + " price: " +  pr.group(1) ;
             }
 
         }
