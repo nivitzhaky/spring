@@ -54,6 +54,7 @@ public class AppController {
 
     private String doQuery(String keyword) throws IOException {
         OkHttpClient client = new OkHttpClient();
+        System.out.println("query for " + keyword);
         Request request = new Request.Builder()
                 .url("https://www.amazon.com/s?i=aps&k="+ keyword + "&ref=nb_sb_noss&url=search-alias%3Daps")
                 .method("GET", null)
