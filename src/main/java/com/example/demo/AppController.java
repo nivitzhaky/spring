@@ -78,7 +78,7 @@ public class AppController {
     }
     private String process(String keyword) throws IOException {
         String res = "";
-        String text = doQuery("ipod");
+        String text = doQuery(keyword);
         Pattern name = Pattern.compile("span class=\"a-size-medium a-color-base a-text-normal\" dir=\"auto\">([A-Za-z0-9\\(\\)\\- ]+)</span>                                </a>    </h2>            </div>");
         Pattern price = Pattern.compile("<span class=\"a-offscreen\">([0-9.$]+)</span><span aria-hidden=\"true\"><span class=\"a-price-symbol\">");
         String[] prods = (text.replace("\n","").split("</div></div>        </div>      </div></div>    </div>  </div></div></span>"));
