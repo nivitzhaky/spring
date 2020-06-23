@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.json.BotResponse;
 import com.example.demo.json.BotWebhook;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -20,25 +21,23 @@ import java.util.regex.Pattern;
  * Created by bysocket on 26/09/2017.
  */
 @RestController
+@RequestMapping(value = "/app")
 public class AppController {
 
-    @RequestMapping(value = "/app", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     public String sayHello() {
         return "Hello";
     }
 
-    @RequestMapping(value = "/app", method = RequestMethod.POST)
-    public String postBot(@RequestBody BotWebhook webhook) throws IOException {
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    public BotResponse postBot(@RequestBody BotWebhook webhook) throws IOException {
         System.out.println(webhook);
-        String response = "{\"fulfillmentText\": \"\",\n" +
-                "     \"source\": \"dad jokes\"\n" +
-                "    }";
+        BotResponse response = new BotResponse();
         if (webhook != null && webhook.getQueryResult() != null && webhook.getQueryResult().getParameters() != null) {
             String subject = webhook.getQueryResult().getParameters().getSubject();
             if ((subject != null) && !(subject.equals(""))) {
-                response = "{\"fulfillmentText\": \"" + process(subject) + "\",\n" +
-                        "     \"source\": \"dad jokes\"\n" +
-                        "    }";
+                response.setFulfillmentText(process(subject) );
+                response.setSource("something");
             }
         };
         return response;
