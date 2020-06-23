@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.json.BotWebhook;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -15,40 +16,31 @@ import java.util.regex.Pattern;
 
 /**
  * Spring Boot Hello案例
- *
+ * <p>
  * Created by bysocket on 26/09/2017.
  */
 @RestController
 public class AppController {
 
-    @RequestMapping(value = "/app",method = RequestMethod.GET)
+    @RequestMapping(value = "/app", method = RequestMethod.GET)
     public String sayHello() {
         return "Hello";
     }
 
-    @RequestMapping(value = "/app",method = RequestMethod.POST)
-    public String postBot(@RequestBody Map<String,Object> webhook) throws IOException {
+    @RequestMapping(value = "/app", method = RequestMethod.POST)
+    public String postBot(@RequestBody BotWebhook webhook) throws IOException {
         System.out.println(webhook);
         String response = "{\"fulfillmentText\": \"\",\n" +
                 "     \"source\": \"dad jokes\"\n" +
                 "    }";
-        if (webhook.get("queryResult") != null){
-            Map<String, Object> query =  ((Map<String, Object>)webhook.get("queryResult"));
-            if (query.get("parameters") != null) {
-                Map<String, Object> parameters =  ((Map<String, Object>)query.get("parameters"));
-                if (parameters.get("subject") != null) {
-                    String subject =  ((String)parameters.get("subject"));
-                    if ((subject != null) && !(subject.equals(""))) {
-                        response = "{\"fulfillmentText\": \"" + process(subject) + "\",\n" +
-                                "     \"source\": \"dad jokes\"\n" +
-                                "    }";
-
-                    }
-                }
+        if (webhook != null && webhook.getQueryResult() != null && webhook.getQueryResult().getParameters() != null) {
+            String subject = webhook.getQueryResult().getParameters().getSubject();
+            if ((subject != null) && !(subject.equals(""))) {
+                response = "{\"fulfillmentText\": \"" + process(subject) + "\",\n" +
+                        "     \"source\": \"dad jokes\"\n" +
+                        "    }";
             }
-        }
-
-        ;
+        };
         return response;
     }
 
@@ -56,7 +48,7 @@ public class AppController {
         OkHttpClient client = new OkHttpClient();
         System.out.println("query for " + keyword);
         Request request = new Request.Builder()
-                .url("https://www.amazon.com/s?i=aps&k="+ keyword + "&ref=nb_sb_noss&url=search-alias%3Daps")
+                .url("https://www.amazon.com/s?i=aps&k=" + keyword + "&ref=nb_sb_noss&url=search-alias%3Daps")
                 .method("GET", null)
                 .addHeader("Connection", "keep-alive")
                 .addHeader("rtt", "200")
@@ -76,19 +68,21 @@ public class AppController {
         Response response = client.newCall(request).execute();
         return response.body().string();
     }
+
     private String process(String keyword) throws IOException {
         String res = "";
         String text = doQuery(keyword);
         Pattern name = Pattern.compile("span class=\"a-size-medium a-color-base a-text-normal\" dir=\"auto\">([A-Za-z0-9\\(\\)\\- ]+)</span>                                </a>    </h2>            </div>");
         Pattern price = Pattern.compile("<span class=\"a-offscreen\">([0-9.$]+)</span><span aria-hidden=\"true\"><span class=\"a-price-symbol\">");
-        String[] prods = (text.replace("\n","").split("</div></div>        </div>      </div></div>    </div>  </div></div></span>"));
-        for (String  p : prods) {
+        System.out.println(text.replace("\n", ""));
+        String[] prods = (text.replace("\n", "").split("</div></div>        </div>      </div></div>    </div>  </div></div></span>"));
+        for (String p : prods) {
             //System.out.println(p);
             Matcher m = name.matcher(p);
             Matcher pr = price.matcher(p);
             if (m.find() && pr.find()) {
-                System.out.println(m.group(1) + " price: " +  pr.group(1));
-                res += m.group(1) + " price: " +  pr.group(1) ;
+                System.out.println(m.group(1) + " price: " + pr.group(1));
+                res += m.group(1) + " price: " + pr.group(1);
             }
 
         }
