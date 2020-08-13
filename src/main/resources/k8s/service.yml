@@ -7,5 +7,5 @@ spec:
     app: spring
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 9376
+      port: 80
+      targetPort: 8080
